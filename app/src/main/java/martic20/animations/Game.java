@@ -2,19 +2,16 @@ package martic20.animations;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import tyrantgit.explosionfield.ExplosionField;
 
@@ -22,7 +19,7 @@ import tyrantgit.explosionfield.ExplosionField;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class FullscreenActivity extends AppCompatActivity {
+public class Game extends AppCompatActivity {
     ExplosionField explosionField;
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -103,12 +100,15 @@ public class FullscreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_fullscreen);
+        setContentView(R.layout.activity_game);
 
         mVisible = true;
-        mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = findViewById(R.id.fullscreen_content);
+        mControlsView = findViewById(R.id.game_content_controls);
+        mContentView = findViewById(R.id.game_content);
 
+        Integer currentBall = getIntent().getIntExtra("ball",1);
+        int id = getResources().getIdentifier("martic20.animations:drawable/ball" + currentBall, null, null);
+        imatge.setImageResource(id);
 
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
@@ -124,39 +124,11 @@ public class FullscreenActivity extends AppCompatActivity {
 
 
         imatge = (ImageView) findViewById(R.id.imageView);
-        RelativeLayout fullscreen_content = (RelativeLayout) findViewById(R.id.fullscreen_content);
-        fullscreen_content.setOnTouchListener(new OnSwipeTouchListener(FullscreenActivity.this) {
-            public void onSwipeTop() {
-            }
-            public void onSwipeRight() {
-                if(++currentBall>totalBalls){
-                    currentBall=1;
-                }
-                int id = getResources().getIdentifier("martic20.animations:drawable/ball" + currentBall, null, null);
-                imatge.setImageResource(id);
-            }
-            public void onSwipeLeft() {
-                if(--currentBall<1){
-                    currentBall=8;
-                }
-                int id = getResources().getIdentifier("martic20.animations:drawable/ball" + currentBall, null, null);
-                imatge.setImageResource(id);
-            }
-            public void onSwipeBottom() {
-                explosionField = ExplosionField.attach2Window(FullscreenActivity.this);
-                explosionField.explode(imatge);
-                Intent i= new Intent(FullscreenActivity.this,Game.class);
-                i.putExtra("ball",currentBall);
-                startActivity(i);
-            }
-
-        });
+        RelativeLayout game_content = (RelativeLayout) findViewById(R.id.game_content);
         Animation animacioPilota = AnimationUtils.loadAnimation(this, R.anim.botar);
 
         imatge.startAnimation(animacioPilota);
-
     }
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);

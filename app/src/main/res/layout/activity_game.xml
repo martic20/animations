@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context="martic20.animations.FullscreenActivity">
+    tools:context="martic20.animations.GameActivity">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
     <RelativeLayout
-        android:id="@+id/fullscreen_content"
+        android:id="@+id/game_content"
         android:orientation="vertical"
         android:gravity="center"
         android:layout_width="match_parent"
@@ -46,7 +46,7 @@ android:textAlignment="center"
         android:fitsSystemWindows="true">
 
         <LinearLayout
-            android:id="@+id/fullscreen_content_controls"
+            android:id="@+id/game_content_controls"
             style="?metaButtonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
