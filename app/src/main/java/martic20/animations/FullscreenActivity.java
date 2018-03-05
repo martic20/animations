@@ -127,6 +127,7 @@ public class FullscreenActivity extends AppCompatActivity {
         RelativeLayout fullscreen_content = (RelativeLayout) findViewById(R.id.fullscreen_content);
         fullscreen_content.setOnTouchListener(new OnSwipeTouchListener(FullscreenActivity.this) {
             public void onSwipeTop() {
+                startGame();
             }
             public void onSwipeRight() {
                 if(++currentBall>totalBalls){
@@ -143,17 +144,34 @@ public class FullscreenActivity extends AppCompatActivity {
                 imatge.setImageResource(id);
             }
             public void onSwipeBottom() {
-                explosionField = ExplosionField.attach2Window(FullscreenActivity.this);
-                explosionField.explode(imatge);
-                Intent i= new Intent(FullscreenActivity.this,Game.class);
-                i.putExtra("ball",currentBall);
-                startActivity(i);
             }
 
         });
         Animation animacioPilota = AnimationUtils.loadAnimation(this, R.anim.botar);
-
         imatge.startAnimation(animacioPilota);
+
+    }
+
+    Runnable r = new Runnable() {
+        @Override
+        public void run() {
+            Intent i= new Intent(FullscreenActivity.this,Game.class);
+            i.putExtra("ball",currentBall);
+            startActivity(i);
+            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+            finish();
+        }
+    };
+    protected void startGame(){
+        explosionField = ExplosionField.attach2Window(FullscreenActivity.this);
+        explosionField.explode(imatge);
+        Handler h = new Handler();
+        h.postDelayed(r, 1200);
+        //Intent i= new Intent(FullscreenActivity.this,Game.class);
+        //i.putExtra("ball",currentBall);
+        //startActivity(i);
+       //overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+        //finish();
 
     }
 

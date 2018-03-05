@@ -1,5 +1,6 @@
 package martic20.animations;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,9 +11,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import me.angrybyte.circularslider.CircularSlider;
 import tyrantgit.explosionfield.ExplosionField;
 
 /**
@@ -20,14 +26,15 @@ import tyrantgit.explosionfield.ExplosionField;
  * status bar and navigation/system bar) with user interaction.
  */
 public class Game extends AppCompatActivity {
-    ExplosionField explosionField;
-    /**
+        /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
      */
     private static final boolean AUTO_HIDE = true;
 
     private int currentBall=1;
+    private int rotation=100;
+    private int duration=1000;
     private static final int totalBalls=8;
     private static  ImageView imatge=null;
 
@@ -101,14 +108,16 @@ public class Game extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_game);
+        imatge = (ImageView) findViewById(R.id.imageView);
 
         mVisible = true;
         mControlsView = findViewById(R.id.game_content_controls);
         mContentView = findViewById(R.id.game_content);
-
-        Integer currentBall = getIntent().getIntExtra("ball",1);
+        hide();
+        currentBall = getIntent().getIntExtra("ball",1);
         int id = getResources().getIdentifier("martic20.animations:drawable/ball" + currentBall, null, null);
         imatge.setImageResource(id);
+
 
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
@@ -122,12 +131,71 @@ public class Game extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
 
+        CircularSlider c = (CircularSlider) findViewById(R.id.circular);
 
-        imatge = (ImageView) findViewById(R.id.imageView);
-        RelativeLayout game_content = (RelativeLayout) findViewById(R.id.game_content);
-        Animation animacioPilota = AnimationUtils.loadAnimation(this, R.anim.botar);
+        SeekBar sk = (SeekBar) findViewById(R.id.seekBar);
+        sk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int ii=0;
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                ii=i*100;
+            }
 
-        imatge.startAnimation(animacioPilota);
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int i = imatge.getMeasuredHeight();
+                ObjectAnimator animation = ObjectAnimator.ofFloat(imatge, "rotation", 0, 360);
+                duration =ii+100;
+                animation.setDuration(duration);
+
+                imatge.setPivotX(0);
+                imatge.setPivotY(rotation/ 2);
+                animation.setRepeatCount(ObjectAnimator.INFINITE);
+                animation.setInterpolator(new LinearInterpolator());
+                animation.start();
+            }
+        });
+
+        SeekBar sk1 = (SeekBar) findViewById(R.id.seekBar2);
+        sk1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int ii=0;
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                ii=i*100;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                rotation=(ii/600)+1;
+                ObjectAnimator animation = ObjectAnimator.ofFloat(imatge, "rotation", 0, 360);
+                animation.setDuration(duration);
+
+                imatge.setPivotX(imatge.getMeasuredWidth()*rotation);
+                imatge.setPivotY(imatge.getMeasuredHeight() / 2*rotation);
+                animation.setRepeatCount(ObjectAnimator.INFINITE);
+                animation.setInterpolator(new LinearInterpolator());
+                animation.start();
+            }
+        });
+
+        int i = imatge.getMeasuredHeight();
+        ObjectAnimator animation = ObjectAnimator.ofFloat(imatge, "rotation", 0, 360);
+        animation.setDuration(duration);
+        imatge.setPivotX(0);
+        imatge.setPivotY(rotation / 2);
+        animation.setRepeatCount(ObjectAnimator.INFINITE);
+        animation.setInterpolator(new LinearInterpolator());
+        animation.start();
     }
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
